@@ -20,4 +20,12 @@ def test_get_all(client):
     res = client.get("/inventory")
     assert res.status_code == 200
     assert len(res.get_json()) == 2
+
+def test_get_one(client):
+    res = client.get("/inventory/1")
+    assert res.status_code == 200
+    assert res.get_json()["product_name"] == "Organic Almond Milk"
+
+def test_get_one_not_found(client):
+    assert client.get("/inventory/999").status_code == 404
  
