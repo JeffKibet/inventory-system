@@ -70,3 +70,70 @@ def update_item():
         show_item(response.json())
     else:
         print(response.json()["error"])
+
+def delete_item():
+    item_id = input("Item ID: ")
+    try:
+        response = requests.delete(f"{API_URL}/inventory/{item_id}")
+    except requests.RequestException:
+        print("Cannot reach the API. Is app.py running?")
+        return
+    if response.status_code == 200:
+        print("Item deleted!")
+    else:
+        print(response.json()["error"])
+
+def find_on_api():
+    choice = input("Search by 1) barcode or 2) name: ")
+    if choice == "1":
+        params = {"barcode": input("Barcode: ")}
+    elif choice == "2":
+        params = {"name": input("Name: ")}
+    else:
+        print("Invalid choice.")
+        return
+    try:
+        response = requests.get(f"{API_URL}/lookup", params=params)
+    except requests.RequestException:
+        print("Cannot reach the API. Is app.py running?")
+        return
+    if response.status_code == 200:
+        product = response.json()
+        print(product["product_name"], "-", product["brands"])
+        print("Ingredients:", product["ingredients_text"])
+    else:
+        print(response.json()["error"])
+
+
+def main():
+    while True:
+        print("\n--- Inventory Manager ---")
+        print("1. View all items")
+        print("2. View one item")
+        print("3. Add item")
+        print("4. Update item")
+        print("5. Delete item")
+        print("6. Find product on OpenFoodFacts")
+        print("0. Quit")
+        choice = input("Choose: ")
+
+        if choice == "1":
+            view_all()
+        elif choice == "2":
+            view_one()
+        elif choice == "3":
+            add_item()
+        elif choice == "4":
+            update_item()
+        elif choice == "5":
+            delete_item()
+        elif choice == "6":
+            find_on_api()
+        elif choice == "0":
+            print("Goodbye!")
+            break
+        else:
+            print("Invalid choice, try again.")
+
+if __name__ == "__main__":
+    main()
