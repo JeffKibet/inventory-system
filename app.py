@@ -86,3 +86,26 @@ def delete_item(item_id):
         return jsonify({"error": "Item not found"}), 404
     inventory.remove(item)
     return jsonify({"message": "Item deleted"}), 200
+
+@app.route("/lookup", methods=["GET"])
+def lookup():
+    barcode = request.args.get("barcode")
+    name = request.args.get("name")
+
+    try:
+        if barcode:
+            product = get_product_by_barcode(barcode)
+        elif name:
+            product = get_product_by_name(name)
+        else:
+            return jsonify({"error": "Give a barcode or a name"}), 400
+    except requests.RequestException:
+        return jsonify({"error": "OpenFoodFacts API failed"}), 502
+
+    if product is None:
+        return jsonify({"error": "Product not found"}), 404
+    return jsonify(product), 200
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
