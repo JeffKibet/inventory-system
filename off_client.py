@@ -18,7 +18,6 @@ def get_product_by_barcode(barcode):
     }
 
 def get_product_by_name(name):
-    """Search OpenFoodFacts by name and return the first match, or None."""
     url = f"{BASE_URL}/cgi/search.pl"
     params = {"search_terms": name, "search_simple": 1,
               "action": "process", "json": 1, "page_size": 1}
