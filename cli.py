@@ -50,3 +50,23 @@ def add_item():
         show_item(response.json())
     else:
         print(response.json()["error"])
+
+def update_item():
+    item_id = input("Item ID: ")
+    try:
+        price = float(input("New price: "))
+        stock = int(input("New stock: "))
+    except ValueError:
+        print("Price and stock must be numbers.")
+        return
+    try:
+        response = requests.patch(f"{API_URL}/inventory/{item_id}",
+                                  json={"price": price, "stock": stock})
+    except requests.RequestException:
+        print("Cannot reach the API. Is app.py running?")
+        return
+    if response.status_code == 200:
+        print("Item updated!")
+        show_item(response.json())
+    else:
+        print(response.json()["error"])
