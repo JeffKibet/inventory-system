@@ -15,3 +15,15 @@ def view_all():
         return
     for item in response.json():
         show_item(item)
+
+def view_one():
+    item_id = input("Item ID: ")
+    try:
+        response = requests.get(f"{API_URL}/inventory/{item_id}")
+    except requests.RequestException:
+        print("Cannot reach the API. Is app.py running?")
+        return
+    if response.status_code == 200:
+        show_item(response.json())
+    else:
+        print(response.json()["error"])
