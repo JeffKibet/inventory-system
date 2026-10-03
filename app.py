@@ -78,3 +78,11 @@ def update_item(item_id):
         if field in data:
             item[field] = data[field]
     return jsonify(item), 200
+
+@app.route("/inventory/<int:item_id>", methods=["DELETE"])
+def delete_item(item_id):
+    item = find_item(item_id)
+    if item is None:
+        return jsonify({"error": "Item not found"}), 404
+    inventory.remove(item)
+    return jsonify({"message": "Item deleted"}), 200
