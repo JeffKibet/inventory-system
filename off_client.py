@@ -7,4 +7,13 @@ def get_product_by_barcode(barcode):
     response = requests.get(url, timeout=10)
     data = response.json()
 
-    
+    if data.get("status") != 1:
+        return None
+
+    product = data["product"]
+    return {
+        "product_name": product.get("product_name", "Unknown"),
+        "brands": product.get("brands", "Unknown"),
+        "ingredients_text": product.get("ingredients_text", ""),
+    }
+
