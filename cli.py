@@ -27,3 +27,26 @@ def view_one():
         show_item(response.json())
     else:
         print(response.json()["error"])
+
+def add_item():
+    name = input("Product name: ")
+    barcode = input("Barcode (press Enter to skip): ")
+    try:
+        price = float(input("Price: "))
+        stock = int(input("Stock: "))
+    except ValueError:
+        print("Price and stock must be numbers.")
+        return
+
+    new_item = {"product_name": name, "price": price,
+                "stock": stock, "barcode": barcode}
+    try:
+        response = requests.post(f"{API_URL}/inventory", json=new_item)
+    except requests.RequestException:
+        print("Cannot reach the API. Is app.py running?")
+        return
+    if response.status_code == 201:
+        print("Item added!")
+        show_item(response.json())
+    else:
+        print(response.json()["error"])
