@@ -30,3 +30,36 @@ def get_one_item(item_id):
     if item is None:
         return jsonify({"error": "Item not found"}), 404
     return jsonify(item), 200
+
+@app.route("/inventory", methods=["POST"])
+def add_item():
+    data = request.get_json(silent=True)
+    if not data or "product_name" not in data or "price" not in data:
+        return jsonify({"error": "product_name and price are required"}), 400
+
+    if inventory:
+        new_id = inventory[-1]["id"] + 1
+    else:
+        new_id = 1
+
+    new_item = {
+        "id": new_id,
+        "product_name": data["product_name"],
+        "brands": data.get("brands", "Unknown"),
+        "ingredients_text": data.get("ingredients_text", ""),
+        "barcode": data.get("barcode", ""),
+        "price": data["price"],
+        "stock": data.get("stock", 0),
+    }
+
+    if new_item["barcode"]:
+        try:
+            product = get_product_by_barcode(new_item["barcode"])
+            if product:
+                new_item["brands"] = product["brands"]
+                new_item["ingredients_text"] = product["ingredients_text"]
+        except requests.RequestException:
+            pass  
+
+    inventory.append(new_item)
+    return jsonify(new_item), 201
